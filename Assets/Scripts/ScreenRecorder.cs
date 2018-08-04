@@ -19,7 +19,7 @@ public class ScreenRecorder : MonoBehaviour
     public Button cameraIcon;
 
     // optional game object to hide during screenshots (usually your scene canvas hud)
-    public GameObject hideGameObject;
+    public GameObject[] hideGameObject;
 
     // optimize for many screenshots will not destroy any objects so future screenshots will be fast
     public bool optimizeForManyScreenshots = true;
@@ -121,9 +121,12 @@ public class ScreenRecorder : MonoBehaviour
             //Debug.Log(string.Format("Save screenshot {0} of size {1}", filename, fileData.Length));
 
             // ----------------------------
-            //// hide optional game object if set
-            //if (hideGameObject != null) hideGameObject.SetActive(false);
-
+            // hide optional game object if set
+            if (hideGameObject != null)
+            {
+                for (int i = 0; i < hideGameObject.Length;i++)
+                    hideGameObject[i].SetActive(false);
+            }
             // create screenshot objects if needed
             if (renderTexture == null)
             {
@@ -150,28 +153,28 @@ public class ScreenRecorder : MonoBehaviour
             // get our unique filename
             string filename = uniqueFilename((int)rect.width, (int)rect.height);
 
-            // pull in our file header/data bytes for the specified image format (has to be done from main thread)
-            byte[] fileHeader = null;
-            byte[] fileData = null;
-            if (format == Format.RAW)
-            {
-                fileData = screenShot.GetRawTextureData();
-            }
-            else if (format == Format.PNG)
-            {
-                fileData = screenShot.EncodeToPNG();
-            }
-            else if (format == Format.JPG)
-            {
-                fileData = screenShot.EncodeToJPG();
-            }
-            else // ppm
-            {
-                // create a file header for ppm formatted file
-                string headerStr = string.Format("P6\n{0} {1}\n255\n", rect.width, rect.height);
-                fileHeader = System.Text.Encoding.ASCII.GetBytes(headerStr);
-                fileData = screenShot.GetRawTextureData();
-            }
+            //// pull in our file header/data bytes for the specified image format (has to be done from main thread)
+            //byte[] fileHeader = null;
+            //byte[] fileData = null;
+            //if (format == Format.RAW)
+            //{
+            //    fileData = screenShot.GetRawTextureData();
+            //}
+            //else if (format == Format.PNG)
+            //{
+            //    fileData = screenShot.EncodeToPNG();
+            //}
+            //else if (format == Format.JPG)
+            //{
+            //    fileData = screenShot.EncodeToJPG();
+            //}
+            //else // ppm
+            //{
+            //    // create a file header for ppm formatted file
+            //    string headerStr = string.Format("P6\n{0} {1}\n255\n", rect.width, rect.height);
+            //    fileHeader = System.Text.Encoding.ASCII.GetBytes(headerStr);
+            //    fileData = screenShot.GetRawTextureData();
+            //}
 
             //// create new thread to save the image to file (only operation that can be done in background)
             //new System.Threading.Thread(() =>
@@ -189,11 +192,15 @@ public class ScreenRecorder : MonoBehaviour
             //File.WriteAllBytes(fullPath, screenShot.EncodeToPNG());
             //NativeGallery.SaveImageToGallery(fullPath, "PassionMaps", Path.GetFileName(fullPath));
 
+            File.WriteAllBytes(filename, screenShot.EncodeToPNG());
             NativeGallery.SaveImageToGallery(filename, "AR", Path.GetFileName(filename));
-            Debug.Log(string.Format("Save screenshot {0} of size {1}", filename, fileData.Length));
+            Debug.Log(string.Format("Save screenshot {0} of size {1}", filename, screenShot.EncodeToPNG().Length));
 
-            //// unhide optional game object if set
-            //if (hideGameObject != null) hideGameObject.SetActive(true);
+            // unhide optional game object if set
+            if (hideGameObject != null) {
+                for (int i = 0; i < hideGameObject.Length; i++)
+                    hideGameObject[i].SetActive(true);
+            }
 
             // cleanup if needed
             if (optimizeForManyScreenshots == false)
