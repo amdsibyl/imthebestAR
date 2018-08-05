@@ -17,6 +17,7 @@ public class ScreenRecorder : MonoBehaviour
     public int captureHeight = 1080;
 
     public Button cameraIcon;
+    public Button panelCorrection;
 
     // optional game object to hide during screenshots (usually your scene canvas hud)
     public GameObject[] hideGameObject;
@@ -26,7 +27,7 @@ public class ScreenRecorder : MonoBehaviour
 
     // configure with raw, jpg, png, or ppm (simple raw format)
     public enum Format { RAW, JPG, PNG, PPM };
-    public Format format = Format.PPM;
+    public Format format = Format.PNG;
 
     // folder to write output (defaults to data path)
     public string folder;
@@ -38,8 +39,13 @@ public class ScreenRecorder : MonoBehaviour
     private int counter = 0; // image #
 
     // commands
-    private bool captureScreenshot = false;
+    public static bool captureScreenshot = false;
+    //private bool captureScreenshot = false;
     //private bool captureVideo = false;
+
+    public static string nowUserPhotoFilePath = "";
+    public static bool reloadTexture = false;
+    public static bool done = false;
 
     // create a unique filename using a one-up variable
     private string uniqueFilename(int width, int height)
@@ -47,16 +53,9 @@ public class ScreenRecorder : MonoBehaviour
         // if folder not specified by now use a good default
         if (folder == null || folder.Length == 0)
         {
-            //#if UNITY_IOS
-            //    folder = "/private/var/mobile/Media/DCIM/";
-            //#elif UNITY_ANDROID
-            //    folder = Application.dataPath;
-            //#else
-            //    folder = Application.dataPath;
-            //#endif
-
             //folder = Application.dataPath;
             folder = Application.persistentDataPath;
+            format = Format.PNG;
             if (Application.isEditor)
             {
                 // put screenshots in folder above asset path so unity doesn't index the files
@@ -93,6 +92,11 @@ public class ScreenRecorder : MonoBehaviour
     {
         Button btnCamera = cameraIcon.GetComponent<Button>();
         btnCamera.onClick.AddListener(CaptureScreenshot);
+        Button btnCorrect = panelCorrection.GetComponent<Button>();
+        btnCorrect.onClick.AddListener(OnClickCorrect);
+        reloadTexture = false;
+        done = false;
+        //nowUserPhotoFilePath = "";
 
         //Calls the TaskOnClick/TaskWithParameters method when you click the Button
         //btn1.onClick.AddListener(TaskOnClick);
@@ -153,6 +157,10 @@ public class ScreenRecorder : MonoBehaviour
             // get our unique filename
             string filename = uniqueFilename((int)rect.width, (int)rect.height);
 
+            if(reloadTexture == true){
+                nowUserPhotoFilePath = filename;
+            }
+
             //// pull in our file header/data bytes for the specified image format (has to be done from main thread)
             //byte[] fileHeader = null;
             //byte[] fileData = null;
@@ -192,6 +200,7 @@ public class ScreenRecorder : MonoBehaviour
             //File.WriteAllBytes(fullPath, screenShot.EncodeToPNG());
             //NativeGallery.SaveImageToGallery(fullPath, "PassionMaps", Path.GetFileName(fullPath));
 
+            //filename = Path.Combine(filename, ".png");
             File.WriteAllBytes(filename, screenShot.EncodeToPNG());
             NativeGallery.SaveImageToGallery(filename, "AR", Path.GetFileName(filename));
             Debug.Log(string.Format("Save screenshot {0} of size {1}", filename, screenShot.EncodeToPNG().Length));
@@ -210,8 +219,12 @@ public class ScreenRecorder : MonoBehaviour
                 screenShot = null;
             }
 
-
+            done = true;
 
         }
+    }
+
+    void OnClickCorrect(){
+        reloadTexture = true;
     }
 }
