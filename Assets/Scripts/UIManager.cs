@@ -21,7 +21,11 @@ public class UIManager : MonoBehaviour
     public GameObject ThirdPanel;
 
     //Second
+    public Image user;
+    Color userColor;
+    public GameObject cancelIcon;
     public GameObject secondCorrection;
+    public GameObject secondSwitch;
     public GameObject countdownObj;
     Text countdownText;
     public GameObject noticeText;
@@ -34,9 +38,11 @@ public class UIManager : MonoBehaviour
     //Main
     public Button backToCorrection;
     public GameObject photo;
+    //public Text cameraText;
 
     bool firstDone = false;
     bool firstToSecond = false;
+    bool firstTimeToSecond = true;
     bool secondDone = false;
     public static bool secondToThird = false;
 
@@ -59,6 +65,10 @@ public class UIManager : MonoBehaviour
         startTime = Time.time;
 
         //Second
+        userColor = user.color;
+        userColor.a = 0.8f;
+        Button btnCancel = cancelIcon.GetComponent<Button>();
+        btnCancel.onClick.AddListener(OnClickCancellation);
         Button btnSecCorrection = secondCorrection.GetComponent<Button>();
         btnSecCorrection.onClick.AddListener(OnClickCorrection);
         countdownText = countdownObj.GetComponent<Text>();
@@ -74,9 +84,9 @@ public class UIManager : MonoBehaviour
         Button btnBackCorrect = backToCorrection.GetComponent<Button>();
         btnBackCorrect.onClick.AddListener(OnClickBackToCorrect);
 
-
         firstDone = false;
         firstToSecond = false;
+        firstTimeToSecond = true;
         secondDone = false;
         secondToThird = false;
     }
@@ -116,6 +126,11 @@ public class UIManager : MonoBehaviour
         else if(firstDone == true && firstToSecond == true){
             //Second Panel
             SecondPanel.SetActive(true);
+            if (firstTimeToSecond){
+                cancelIcon.SetActive(false);
+                firstTimeToSecond = false;
+            }
+            else{cancelIcon.SetActive(true);}
             FirstPanel.SetActive(false);
             countdownObj.SetActive(false);
             firstToSecond = false;
@@ -131,6 +146,10 @@ public class UIManager : MonoBehaviour
 
             noticeText.SetActive(true);
             secondCorrection.SetActive(true);
+            secondSwitch.SetActive(true);
+            cancelIcon.SetActive(true);
+            userColor.a = 0.8f;
+            user.color = userColor;
             SecondPanel.SetActive(false);
             ThirdPanel.SetActive(true);
             ARModeIcons.SetActive(true);
@@ -139,13 +158,20 @@ public class UIManager : MonoBehaviour
 
         if (countdownThread == true)
         {
-            if (clickStartTime == -1){
+            if (clickStartTime == -1)
+            {
                 clickStartTime = Time.time;
+            }
+            if(userColor.a > 0.0f){
+                userColor.a -= 0.0051f;
+                user.color = userColor;
             }
             if (Time.time - clickStartTime < 3.0f)
             {
                 noticeText.SetActive(false);
                 secondCorrection.SetActive(false);
+                secondSwitch.SetActive(false);
+                cancelIcon.SetActive(false);
                 int countdown = 3 - (int)(Time.time - clickStartTime);
                 countdownText.text = countdown.ToString();
             }
@@ -156,16 +182,17 @@ public class UIManager : MonoBehaviour
                     ScreenRecorder.captureScreenshot = true;
                     shotted = true;
                 }
-                if (Time.time - clickStartTime < 4.0f)
-                {
-                    if (ScreenRecorder.done == true)
-                    {
-                        SecondPanel.SetActive(true);
-                        countdownText.fontSize = 150;
-                        countdownText.text = "OK!";
-                    }
-                }
-                else
+                //if (Time.time - clickStartTime < 4.8f)
+                //{
+                //    if (ScreenRecorder.done == true)
+                //    {
+                //        SecondPanel.SetActive(true);
+                //        countdownText.fontSize = 150;
+                //        countdownText.text = "OK!";
+                //    }
+                //}
+                //else
+                if(Time.time - clickStartTime > 4.2f)
                 {
                     countdownObj.SetActive(false);
                     countdownText.fontSize = 300;
@@ -176,6 +203,7 @@ public class UIManager : MonoBehaviour
                     secondToThird = true;
                     shotted = false;
                     ScreenRecorder.done = false;
+                    //cameraText.text = "";
                 }
             }
         }
@@ -185,6 +213,9 @@ public class UIManager : MonoBehaviour
         countdownText.text = "3";
         countdownObj.SetActive(true);
         countdownThread = true;
+    }
+    void OnClickCancellation(){
+        SecondPanel.SetActive(false);
     }
 
     void OnClickGo(){

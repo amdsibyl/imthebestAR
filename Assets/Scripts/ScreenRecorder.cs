@@ -46,6 +46,10 @@ public class ScreenRecorder : MonoBehaviour
     public static string nowUserPhotoFilePath = "";
     public static bool reloadTexture = false;
     public static bool done = false;
+    public Text cameraText;
+    bool clickCameraIcon = false;
+    float clickCameraTime = -1;
+    string filename;
 
     // create a unique filename using a one-up variable
     private string uniqueFilename(int width, int height)
@@ -86,6 +90,7 @@ public class ScreenRecorder : MonoBehaviour
     {
         //Debug.Log("CaptureScreenshot!");
         captureScreenshot = true;
+        clickCameraIcon = true;
     }
 
     private void Start()
@@ -96,6 +101,9 @@ public class ScreenRecorder : MonoBehaviour
         btnCorrect.onClick.AddListener(OnClickCorrect);
         reloadTexture = false;
         done = false;
+        clickCameraIcon = false;
+        clickCameraTime = -1;
+
         //nowUserPhotoFilePath = "";
 
         //Calls the TaskOnClick/TaskWithParameters method when you click the Button
@@ -155,7 +163,7 @@ public class ScreenRecorder : MonoBehaviour
             RenderTexture.active = null;
 
             // get our unique filename
-            string filename = uniqueFilename((int)rect.width, (int)rect.height);
+            filename = uniqueFilename((int)rect.width, (int)rect.height);
 
             if(reloadTexture == true){
                 nowUserPhotoFilePath = filename;
@@ -203,7 +211,10 @@ public class ScreenRecorder : MonoBehaviour
             //filename = Path.Combine(filename, ".png");
             File.WriteAllBytes(filename, screenShot.EncodeToPNG());
             NativeGallery.SaveImageToGallery(filename, "AR", Path.GetFileName(filename));
-            Debug.Log(string.Format("Save screenshot {0} of size {1}", filename, screenShot.EncodeToPNG().Length));
+            Debug.Log(string.Format("Save screenshot: {0} of size {1}", filename, screenShot.EncodeToPNG().Length));
+            if(clickCameraIcon && clickCameraTime == -1){
+                clickCameraTime = Time.time;
+            }
 
             // unhide optional game object if set
             if (hideGameObject != null) {
@@ -219,12 +230,29 @@ public class ScreenRecorder : MonoBehaviour
                 screenShot = null;
             }
 
+            StartCoroutine(waiter());
             done = true;
 
         }
+        if (clickCameraIcon && Time.time - clickCameraTime < 2.0f)
+        {
+            cameraText.text = string.Format("Save screenshot: {0}", filename);
+        }
+        else
+        {
+            cameraText.text = "";
+            clickCameraTime = -1;
+        }
+
     }
 
     void OnClickCorrect(){
         reloadTexture = true;
+    }
+
+    IEnumerator waiter()
+    {
+        //Wait for 0.5 second
+        yield return new WaitForSeconds(0.5f);
     }
 }
