@@ -43,6 +43,7 @@ public class UIManager : MonoBehaviour
     bool firstDone = false;
     bool firstToSecond = false;
     bool firstTimeToSecond = true;
+    //bool firstTimeToSecond = false;
     bool secondDone = false;
     public static bool secondToThird = false;
 
@@ -87,6 +88,7 @@ public class UIManager : MonoBehaviour
         firstDone = false;
         firstToSecond = false;
         firstTimeToSecond = true;
+        //firstTimeToSecond = false;
         secondDone = false;
         secondToThird = false;
     }
