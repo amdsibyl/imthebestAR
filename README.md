@@ -1,4 +1,11 @@
 # imthebestAR
+### Android APP Download:
+https://play.google.com/store/apps/details?id=com.amandatsai96.imthebest
+
+### iOS APP Download:
+https://itunes.apple.com/us/app/%E4%B8%BB%E8%A7%92-im-the-best/id1437479952?l=zh&ls=1&mt=8
+
+
 * An Augumented Reality Artwork made by Amanda Tsai from Tainan, Taiwan.
 * This work will be exhibited in 2018 Nuit Blanche Taipei.
 * 「我拍的不只是一個廣告看板，我正在製作屬於我自己的廣告。」
