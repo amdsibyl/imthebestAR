@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <QCARConfig xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="qcar_config.xsd">
   <Tracking>
-    <ImageTarget name="3-M_" size="1.000000 0.843585" />
-    <ImageTarget name="3-L" size="1.000000 1.666667" />
-    <ImageTarget name="1-A2" size="1.000000 1.897163" />
+    <ImageTarget name="lll-1" size="1.000000 0.971774" />
+    <ImageTarget name="focus" size="1.000000 0.562500" />
+    <ImageTarget name="S__98426924-4" size="1.000000 1.364706" />
+    <ImageTarget name="S__98426924" size="1.000000 1.333935" />
+    <ImageTarget name="S__98426924-3" size="1.000000 1.364706" />
+    <ImageTarget name="S__98426924-2" size="1.000000 1.364706" />
+    <ImageTarget name="S__98426924-1" size="1.000000 1.580749" />
+    <ImageTarget name="4-B" size="1.000000 3.168628" />
     <ImageTarget name="4-A" size="1.000000 2.477947" />
-    <ImageTarget name="3-E" size="1.000000 0.884144" />
   </Tracking>
 </QCARConfig>
